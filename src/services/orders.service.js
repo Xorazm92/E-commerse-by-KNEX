@@ -1,9 +1,9 @@
-import mongoose from 'mongoose';
-import { Orders } from '../schemas/index.js'; 
+import { db } from '../database/index.js';
 
 export const getAllOrders = async () => {
     try {
-        const data = await Orders.find(); 
+        const data = await db.select().from('orders'); 
+        
         if (!data.length) {
             throw new Error('Orders not found');
         }
@@ -15,7 +15,7 @@ export const getAllOrders = async () => {
 
 export const getOrdersById = async (id) => {
     try {
-        const data = await Orders.findById(id); 
+        const data = await db.select().from("orders").where("id", "=", id); 
         if (!data) {
             throw new Error('Order not found');
         }
@@ -27,9 +27,8 @@ export const getOrdersById = async (id) => {
 
 export const createOrders = async (order) => {
     try {
-        const newOrder = new Orders(order); 
-        const data = await newOrder.save(); 
-        return data;
+        const newOrder = await db("orders").insert(order).returning("*"); 
+        return newOrder;
     } catch (error) {
         throw new Error(error.message);
     }
@@ -37,7 +36,7 @@ export const createOrders = async (order) => {
 
 export const deleteOrders = async (id) => {
     try {
-        const data = await Orders.findByIdAndDelete(id); 
+        const data = await db("orders").where("id", "=", id); 
         if (!data) {
             throw new Error('Order not deleted for some reason');
         }
