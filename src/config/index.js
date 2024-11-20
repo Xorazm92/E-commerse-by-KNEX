@@ -7,3 +7,4 @@ export const config = {
     ...app,
     ...token
 }
+

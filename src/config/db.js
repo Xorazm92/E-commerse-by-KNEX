@@ -2,7 +2,10 @@ import { config } from "dotenv";
 config()
 
 export default {
-    monodb:{
-        db_uri: process.env.MONGO_DB
+    postgres:{
+        user: process.env.PG_USER,
+        password: process.env.PG_PASSWORD,
+        host: process.env.PG_HOST,
+        port: process.env.PG_PORT
     }
 }
