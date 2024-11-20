@@ -1,0 +1,12 @@
+export * from './category.routes.js'
+export * from './users.routes.js'
+export * from './auth.routes.js'
+export * from './addressess.routes.js'
+export * from './products.routes.js'
+export * from './wishlist.routes.js'
+export * from './cartItem.routes.js'
+export * from './review.routes.js'
+export * from './social_profile.routes.js'
+export * from './carts.routes.js'
+export * from './orders.routes.js'
+

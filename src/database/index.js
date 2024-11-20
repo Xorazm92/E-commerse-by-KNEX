@@ -1,0 +1,1 @@
+//bu yearda xechnarsa bo'lmaydi, schemada exportda bo'ladi
