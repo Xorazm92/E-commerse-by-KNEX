@@ -1,11 +1,27 @@
-import { Review } from "../schemas/index.js";
+import { db } from "../database/index.js";
 import { AppError } from "../utils/index.js";
 
 export const reviewService = {
     getAll: async () => {
         try {
-            const reviews = await Review.find().populate("user_id").populate("product_id");
-            return reviews;
+            const reviews = await db("reviews")
+                .select("*")
+                .leftJoin("users", "reviews.user_id", "users.id")
+                .leftJoin("products", "reviews.product_id", "products.id");
+
+            return reviews.map((review) => ({
+                id: review.id,
+                rating: review.rating,
+                comment: review.comment,
+                user: {
+                    id: review.user_id,
+                    name: review.user_name,
+                },
+                product: {
+                    id: review.product_id,
+                    name: review.product_name,
+                },
+            }));
         } catch (error) {
             throw new AppError(error.message, 500);
         }
@@ -13,11 +29,30 @@ export const reviewService = {
 
     getById: async (id) => {
         try {
-            const review = await Review.findById(id).populate("user_id").populate("product_id");
+            const review = await db("reviews")
+                .select("*")
+                .where("reviews.id", id)
+                .leftJoin("users", "reviews.user_id", "users.id")
+                .leftJoin("products", "reviews.product_id", "products.id")
+                .first();
+
             if (!review) {
                 throw new AppError("Review not found", 404);
             }
-            return review;
+
+            return {
+                id: review.id,
+                rating: review.rating,
+                comment: review.comment,
+                user: {
+                    id: review.user_id,
+                    name: review.user_name,
+                },
+                product: {
+                    id: review.product_id,
+                    name: review.product_name,
+                },
+            };
         } catch (error) {
             throw error instanceof AppError ? error : new AppError(error.message, 500);
         }
@@ -25,8 +60,11 @@ export const reviewService = {
 
     create: async (reviewData) => {
         try {
-            const newReview = await Review.create(reviewData);
-            return newReview;
+            const newReview = await db("reviews")
+                .insert(reviewData)
+                .returning("*");
+
+            return newReview[0];
         } catch (error) {
             throw new AppError(error.message, 500);
         }
@@ -34,16 +72,16 @@ export const reviewService = {
 
     update: async (id, updateData) => {
         try {
-            const updatedReview = await Review.findByIdAndUpdate(id, updateData, {
-                new: true, 
-                runValidators: true, 
-            });
+            const updatedReview = await db("reviews")
+                .where({ id })
+                .update(updateData)
+                .returning("*");
 
-            if (!updatedReview) {
+            if (updatedReview.length === 0) {
                 throw new AppError("Review not found", 404);
             }
 
-            return updatedReview;
+            return updatedReview[0];
         } catch (error) {
             throw new AppError(error.message, 500);
         }
@@ -51,13 +89,16 @@ export const reviewService = {
 
     delete: async (id) => {
         try {
-            const deletedReview = await Review.findByIdAndDelete(id);
+            const deletedReview = await db("reviews")
+                .where({ id })
+                .del()
+                .returning("*");
 
-            if (!deletedReview) {
+            if (deletedReview.length === 0) {
                 throw new AppError("Review not found", 404);
             }
 
-            return deletedReview;
+            return deletedReview[0];
         } catch (error) {
             throw new AppError(error.message, 500);
         }

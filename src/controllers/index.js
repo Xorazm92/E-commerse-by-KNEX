@@ -9,4 +9,5 @@ export * from './cartItem.controller.js'
 export * from './social_profile.controller.js'
 export * from './carts.controller.js'
 export * from './orders.controller.js'
+export * from './setup.controller.js'
 
