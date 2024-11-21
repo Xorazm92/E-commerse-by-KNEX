@@ -1,4 +1,3 @@
-
 import knex from "knex";
 import { config } from "../config/index.js";
 
@@ -10,4 +9,4 @@ export const db = knex({
         password: config.postgres.password,
         database: config.postgres.database
     }
-})
+});
