@@ -1,19 +1,23 @@
-import mongoose from "mongoose"
+import knex from 'knex';
+import { logger } from '../utils/logger.js';
+import knex from "../database/index.js";
 
-const categorySchema = new mongoose.Schema({
-    name: {
-        type: String,
-        required: true,
-        unique: true,
-    },
-    description: {
-        type: String,
-        required: false,
-    tag: {
-        type: String,
-        require: true
-    }
-    }
-},{timestamps: true});
+export const createCategoriesTable = async () => {
+    try {
 
-export const Category = mongoose.model("category", categorySchema)
+        await db.schema.createTableIfNotExists('categories', (table) => {
+            table.increments('id').primary(); 
+            table.string('name').notNullable(); 
+            table.string('description'); 
+            table.string('tag').notNullable(); 
+            table.timestamp('create_at').defaultTo(db.fn.now()); 
+            table.timestamp('update_at').defaultTo(db.fn.now()); 
+        });
+
+        logger.info('Categories table created successfully');
+    } catch (error) {
+        logger.error(error);
+    } finally {
+        await db.destroy(); 
+    }
+};

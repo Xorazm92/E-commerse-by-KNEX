@@ -1,42 +1,30 @@
-import mongoose from "mongoose"
-
-const usersSchema = mongoose.Schema({
-    name: {
-        type: String,
-        required: true
-    },
-    email: {
-        type: String,
-        required: true,
-        unique: true
-    },
-    password:{
-        type: String,
-        required: true
-    },
-    role: { type: String, enum: ['SuperAdmin', 'Admin', 'User'], default: 'User' },
-    avatar: {
-        type: String
-    },
-    username: {
-        type: String,
-        unique: true,
-        require: true
-    },
-    birth_of_date: {
-        type: Date,
-        default: '2024-04-06'
-    },
-    phone_number: {
-        type: String,
-        unique: true,
-        require: true
-    },
-    is_active: {
-        type: Boolean,
-        default: false,
-    },
-}, {timestamps: true})
+import knex from 'knex';
+import { logger } from '../utils/logger.js';
+import knex from "../database/index.js";
 
 
-export const Users = mongoose.model("users", usersSchema)
+
+export const createUserTable = async () => {
+    try {
+        await db.schema.createTableIfNotExists('users', (table) => {
+            table.increments('id').primary(); 
+            table.string('name').notNullable(); 
+            table.string('email').unique().notNullable(); 
+            table.string('password').notNullable(); 
+            table.enu('role', ['user', 'admin', 'manager']).defaultTo('user'); 
+            table.string('avatar'); 
+            table.string('username').unique().notNullable();  
+            table.date('birth_of_date');
+            table.string('phone_number').unique().notNullable(); 
+            table.boolean('is_active').defaultTo(false); 
+            table.timestamp('create_at').defaultTo(db.fn.now()); 
+            table.timestamp('update_at').defaultTo(db.fn.now());  
+        });
+
+        logger.info('Users table created successfully');
+    } catch (error) {
+        logger.error(error);
+    } finally {
+        await db.destroy(); 
+    }
+};

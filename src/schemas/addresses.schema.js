@@ -1,52 +1,29 @@
-import mongoose, {Schema} from 'mongoose';
+import knex from 'knex';
+import { logger } from '../utils/logger.js';
+import knex from "../database/index.js";
 
-const addressSchema = mongoose.Schema({
-    user_id: {
-        type: Schema.Types.ObjectId,
-        ref: 'users',
-        required: true,
-    },
-    title: {
-        type: String,
-        required: true,
-        trim: true,
-    },
-    created_at: {
-        type: Date,
-        default: Date.now,
-    },
-    address_line_1: {
-        type: String,
-        required: true,
-        trim: true,
-    },
-    address_line_2: {
-        type: String,
-        trim: true,
-    },
-    country: {
-        type: String,
-        required: true,
-        trim: true,
-    },
-    city: {
-        type: String,
-        required: true,
-        trim: true,
-    },
-    postal_code: {
-        type: String,
-        required: true,
-        trim: true,
-    },
-    phone_number: {
-        type: String,
-        required: true,
-        trim: true,
-    },
-    landmark: {
-        type: String
+
+export const createAddressesTable = async () => {
+    try {
+
+        await db.schema.createTableIfNotExists('addresses', (table) => {
+            table.increments('id').primary(); 
+            table.integer('user_id').references('id').inTable('users'); 
+            table.string('title').notNullable(); 
+            table.timestamp('create_at').defaultTo(db.fn.now()); 
+            table.string('address_line_1');
+            table.string('address_line_2'); 
+            table.string('country').notNullable();
+            table.string('city').notNullable(); 
+            table.string('postal_code'); 
+            table.string('phone_number');
+            table.string('landmark'); 
+        });
+
+        logger.info('Addresses table created successfully');
+    } catch (error) {
+        logger.error(error);
+    } finally {
+        await db.destroy(); 
     }
-});
-
-export const Addresses =  mongoose.model('addresses', addressSchema);
+};
