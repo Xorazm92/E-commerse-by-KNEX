@@ -1,5 +1,5 @@
 import express from 'express';
-import { setupController } from '../controllers/index';
+import { setupController } from '../controllers/index.js';
 
 export const setupRouter = express.Router();
 

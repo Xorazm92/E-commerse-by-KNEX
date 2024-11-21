@@ -1,6 +1,7 @@
-import { Category } from "../schemas/index.js";
-import { AppError } from "../utils/index.js";
-import db from "../databases/index.js";
+import { Category } from '../schemas/index.js'
+import { AppError } from '../utils/index.js';
+import { db } from "../database/index.js"
+
 
 // export const getCategorySevice = async (type, data = "") => {
 //     try {
@@ -34,37 +35,38 @@ import db from "../databases/index.js";
 //         throw new Error(error)
 //     }
 // }
-export const getCategoryService = async (type, data = "") => {
+export const getCategoryService = async (type, data = '') => {
     try {
-        let query = db('categories');
+        let query = db('categories')
 
         switch (type) {
-            case "all":
-                return await query.select('*');
-            case "id":
-                return await query.where({ id: data }).select('*');
-            case "name":
-                return await query.where({ name: data }).select('*');
-            case "tag":
-                return await query.where({ tag: data }).select('*');
+            case 'all':
+                return await query.select('*')
+            case 'id':
+                return await query.where({ id: data }).select('*')
+            case 'name':
+                return await query.where({ name: data }).select('*')
+            case 'tag':
+                return await query.where({ tag: data }).select('*')
             default:
-                return [];
+                return []
         }
     } catch (error) {
-        throw new Error(error);
+        throw new Error(error)
     }
-};
-
+}
 
 export const createCategoryService = async (category) => {
     try {
         // const newCategories = await Category(category)
         // await newCategories.save()
-        const newCategory = await db('categories').insert({
-            name: category.name,
-            description: category.description,
-            tag: category.tag
-        }).returning('*');
+        const newCategory = await db('categories')
+            .insert({
+                name: category.name,
+                description: category.description,
+                tag: category.tag,
+            })
+            .returning('*')
         return newCategories
     } catch (error) {
         throw new Error(error)
@@ -84,27 +86,30 @@ export const createCategoryService = async (category) => {
 // }
 export const updateCategoryService = async (category, id) => {
     try {
-        const oldCategory = await getCategoryService("id", id);
+        const oldCategory = await getCategoryService('id', id)
         if (oldCategory.length === 0) {
-            return false;
+            return false
         }
 
         const updatedData = {
             name: category.name || oldCategory[0].name,
             description: category.description || oldCategory[0].description,
-            tag: category.tag || oldCategory[0].tag
-        };
+            tag: category.tag || oldCategory[0].tag,
+        }
 
-        const updatedCategory = await db('categories').where({ id }).update(updatedData).returning('*');
-        return updatedCategory;
+        const updatedCategory = await db('categories')
+            .where({ id })
+            .update(updatedData)
+            .returning('*')
+        return updatedCategory
     } catch (error) {
-        throw new Error(error);
+        throw new Error(error)
     }
-};
+}
 
 // export const deleteCategoryService = async (id) => {
 //     try {
-        
+
 //         const updateCategories = await Category.findByIdAndDelete(id)
 //         return updateCategories
 //     } catch (error) {
@@ -113,14 +118,17 @@ export const updateCategoryService = async (category, id) => {
 // }
 export const deleteCategoryService = async (id) => {
     try {
-        const oldCategory = await getCategoryService("id", id);
+        const oldCategory = await getCategoryService('id', id)
         if (oldCategory.length === 0) {
-            return false;
+            return false
         }
 
-        const deletedCategory = await db('categories').where({ id }).del().returning('*');
-        return deletedCategory;
+        const deletedCategory = await db('categories')
+            .where({ id })
+            .del()
+            .returning('*')
+        return deletedCategory
     } catch (error) {
-        throw new Error(error);
+        throw new Error(error)
     }
-};
+}

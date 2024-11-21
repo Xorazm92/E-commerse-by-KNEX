@@ -1,6 +1,5 @@
 import knex from "knex";
 import { config } from "../config/index.js";
-console.log(config.postgres);
 
 export const db = knex({
     client: 'pg',

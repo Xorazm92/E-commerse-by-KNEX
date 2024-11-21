@@ -1,4 +1,4 @@
-import knex from 'knex';
+// import knex from 'knex';
 import { logger } from '../utils/logger.js';
 import knex from "../database/index.js";
 

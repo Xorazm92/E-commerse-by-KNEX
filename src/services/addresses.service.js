@@ -1,7 +1,7 @@
 import { Addresses } from "../schemas/index.js"
 import { AppError } from "../utils/appError.js"
 import { logger } from "../utils/logger.js"
-import db from "../databases/index.js";
+import {db} from "../database/index.js";
 
 export const getAllAddressesService = async () =>{
     try {
