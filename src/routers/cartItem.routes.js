@@ -10,8 +10,8 @@ import { authGuard, roleGuard } from "../middlewares/index.js";
 
 export const cartItemRouter = express.Router();
 
-cartItemRouter.get("/", authGuard("access"), getAllCartItemsController);
-cartItemRouter.get("/:id", authGuard("access"), getCartItemByIdController);
-cartItemRouter.post("/", authGuard("access"), createCartItemController);
-cartItemRouter.put("/:id", authGuard("access"), roleGuard(["admin", "user"]), updateCartItemController);
-cartItemRouter.delete("/:id", authGuard("access"), roleGuard(["admin"]), deleteCartItemController);
+cartItemRouter.get("/",  getAllCartItemsController);
+cartItemRouter.get("/:id",  getCartItemByIdController);
+cartItemRouter.post("/",  createCartItemController);
+cartItemRouter.put("/:id", updateCartItemController);
+cartItemRouter.delete("/:id", deleteCartItemController);

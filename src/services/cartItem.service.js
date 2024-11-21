@@ -1,12 +1,11 @@
+import { db } from "../database/index.js";
 import { CartItem } from "../schemas/index.js";
 import { AppError } from "../utils/index.js";
 
 export const cartItemService = {
     getAll: async () => {
         try {
-            const cartItems = await CartItem.find()
-                .populate("cart_id")
-                .populate("product_id");
+            const cartItems = await db.select().from('cart_item')
             return cartItems;
         } catch (error) {
             throw new AppError(error.message, 500);
@@ -15,10 +14,7 @@ export const cartItemService = {
 
     getById: async (id) => {
         try {
-            const cartItem = await CartItem.findById(id)
-                .populate("cart_id")
-                .populate("product_id");
-
+            const cartItem = db.select().from('cart_item').where("id", "=", id)
             if (!cartItem) {
                 throw new AppError("Cart item not found", 404);
             }
@@ -31,7 +27,7 @@ export const cartItemService = {
 
     create: async (cartItemData) => {
         try {
-            const newCartItem = await CartItem.create(cartItemData);
+            const newCartItem = await db('cart_item').insert(cartItemData)
             return newCartItem;
         } catch (error) {
             throw new AppError(error.message, 500);
@@ -40,10 +36,7 @@ export const cartItemService = {
 
     update: async (id, updateData) => {
         try {
-            const updatedCartItem = await CartItem.findByIdAndUpdate(id, updateData, {
-                new: true,
-                runValidators: true,
-            });
+            const updatedCartItem = await db('cart_item').where("id", "=", id).update(updateData);
 
             if (!updatedCartItem) {
                 throw new AppError("Cart item not found", 404);
@@ -57,7 +50,7 @@ export const cartItemService = {
 
     delete: async (id) => {
         try {
-            const deletedCartItem = await CartItem.findByIdAndDelete(id);
+            const deletedCartItem = await db('cart_item').where("id", "=", id).del()
 
             if (!deletedCartItem) {
                 throw new AppError("Cart item not found", 404);

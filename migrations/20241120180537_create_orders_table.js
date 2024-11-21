@@ -4,10 +4,10 @@
  */
 export function up(knex) {
     return knex.schema.createTable('orders', (table) => {
-      table.increments('id').primary();  // auto-incrementing ID
-      table.integer('user_id').notNullable();  // Foreign key for user
-      table.integer('cart_id').notNullable();  // Foreign key for cart
-      table.timestamps(true, true);  // created_at and updated_at with default values
+      table.increments('id').primary();
+      table.integer('user_id').notNullable();
+      table.integer('cart_id').notNullable(); 
+      table.timestamps(true, true); 
     });
   }
   
