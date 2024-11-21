@@ -1,29 +1,23 @@
-import mongoose from "mongoose";
+import { logger } from '../utils/logger.js';
+import {db} from "../database/index.js";
 
-const reviewSchema = new mongoose.Schema({
-  user_id: {
-    type: mongoose.Schema.Types.ObjectId, 
-    ref: 'User',
-    required: true
-  },
-  product_id: {
-    type: mongoose.Schema.Types.ObjectId, 
-    ref: 'Product',
-    required: true
-  },
-  rating: {
-    type: Number, 
-    required: true,
-    min: 1,
-    max: 5 
-  },
-  comment: {
-    type: String, 
-    required: false
-  }
-}, {
-  timestamps: true 
-});
+export const createReviewTable = async () => {
+    try {
 
-export const Review = mongoose.model('Review', reviewSchema);
+        await db.schema.createTableIfNotExists('reviews', (table) => {
+            table.increments('id').primary(); 
+            table.integer('user_id').notNullable().references('id').inTable('users').onDelete('CASCADE'); 
+            table.integer('product_id').notNullable().references('id').inTable('products').onDelete('CASCADE'); 
+            table.smallint('rating'); 
+            table.text('comment').notNullable(); 
+            table.timestamp('create_at').defaultTo(db.fn.now()); 
+            table.timestamp('update_at').defaultTo(db.fn.now()); 
+        });
 
+        logger.info('Reviews table created successfully');
+    } catch (error) {
+        logger.error(error);
+    } finally {
+        await db.destroy(); 
+    }
+};

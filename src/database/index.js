@@ -1,4 +1,3 @@
-//endi yozorasizlar
 
 import knex from "knex";
 import { config } from "../config/index.js";

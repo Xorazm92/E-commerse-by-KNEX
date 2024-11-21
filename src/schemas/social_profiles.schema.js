@@ -1,24 +1,26 @@
-import mongoose from "mongoose";
+import { db } from '../database/index.js';
 
-const socialProfileSchema = new mongoose.Schema({
-  user_id: {
-    type: mongoose.Schema.Types.ObjectId, 
-    ref: 'User',
-    required: true
-  },
-  platform: {
-    type: String, 
-    required: true,
-    trim: true
-  },
-  platform_user: {
-    type: String, 
-    required: true,
-    trim: true
-  }
-}, {
-  timestamps: true 
-});
+export const createSocialProfilesTable = async () => {
+    try {
+        await db.schema.createTableIfNotExists('social_profiles', (table) => {
+            table.increments('id').primary(); 
+            table
+                .integer('user_id') 
+                .unsigned()
+                .notNullable()
+                .references('id')
+                .inTable('users') 
+                .onDelete('CASCADE'); 
+            table.string('platform').notNullable().trim(); 
+            table.string('platform_user').notNullable().trim();
+            table.timestamp('created_at').defaultTo(db.fn.now()); 
+            table.timestamp('updated_at').defaultTo(db.fn.now()); 
+        });
 
-export const SocialProfile = mongoose.model('SocialProfile', socialProfileSchema);
-
+        console.log('SOCIAL_PROFILES table created successfully');
+    } catch (error) {
+        console.error('Error creating SOCIAL_PROFILES table:', error);
+    } finally {
+        await db.destroy(); 
+    }
+};

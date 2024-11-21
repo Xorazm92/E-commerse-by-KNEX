@@ -1,6 +1,6 @@
 import knex from 'knex';
 import { logger } from '../utils/logger.js';
-import knex from "../database/index.js";
+import {db} from "../database/index.js";
 
 export const createCategoriesTable = async () => {
     try {

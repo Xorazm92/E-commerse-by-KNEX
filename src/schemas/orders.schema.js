@@ -1,18 +1,31 @@
-import mongoose from "mongoose";
+import { db } from '../database/index.js';
 
+export const createOrdersTable = async () => {
+    try {
+        await db.schema.createTableIfNotExists('orders', (table) => {
+            table.increments('id').primary();
+            table
+                .integer('user_id')
+                .unsigned()
+                .notNullable()
+                .references('id')
+                .inTable('users')
+                .onDelete('CASCADE');
+            table
+                .integer('cart_id')
+                .unsigned()
+                .notNullable()
+                .references('id')
+                .inTable('carts')
+                .onDelete('CASCADE'); 
+            table.timestamp('created_at').defaultTo(db.fn.now());
+            table.timestamp('updated_at').defaultTo(db.fn.now());
+        });
 
-
-const ordersSchema = new mongoose.Schema({
-    user_id: {
-        type: mongoose.Schema.Types.ObjectId, 
-        ref: 'Users',
-        required: true,
-    },
-    cart_id: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Carts',
-        required: true,
-    },
-},{timestamps: true});
-
-export const Orders = mongoose.model("Order", ordersSchema);
+        console.log('ORDERS table created successfully');
+    } catch (error) {
+        console.error('Error creating ORDERS table:', error);
+    } finally {
+        await db.destroy();
+    }
+};

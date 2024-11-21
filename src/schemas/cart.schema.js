@@ -1,18 +1,25 @@
-import mongoose from "mongoose";
+import { db } from '../database/index.js';
 
-const cartsSchema = new mongoose.Schema(
-    {
-        user_id: {
-            type: mongoose.Schema.Types.ObjectId, 
-            ref: "User",
-            required: true,
-        },
-        total: {
-            type: Number, 
-            required: true,
-        },
-    },
-    { timestamps: true } 
-);
+export const createCartsTable = async () => {
+    try {
+        await db.schema.createTableIfNotExists('carts', (table) => {
+            table.increments('id').primary();
+            table
+                .integer('user_id')
+                .unsigned()
+                .notNullable()
+                .references('id')
+                .inTable('users')
+                .onDelete('CASCADE');
+            table.decimal('total', 10, 2).notNullable();
+            table.timestamp('created_at').defaultTo(db.fn.now());
+            table.timestamp('updated_at').defaultTo(db.fn.now());
+        });
 
-export const Carts = mongoose.model("Carts", cartsSchema);
+        console.log('CARTS table created successfully');
+    } catch (error) {
+        console.error('Error creating CARTS table:', error);
+    } finally {
+        await db.destroy();
+    }
+};

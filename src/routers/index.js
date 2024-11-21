@@ -9,4 +9,5 @@ export * from './review.routes.js'
 export * from './social_profile.routes.js'
 export * from './carts.routes.js'
 export * from './orders.routes.js'
+export * from './setup.routes.js'
 

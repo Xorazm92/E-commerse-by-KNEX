@@ -1,19 +1,21 @@
-import mongoose from "mongoose";
+import { logger } from '../utils/logger.js';
+import {db} from "../database/index.js";
 
-const wishlistSchema = new mongoose.Schema({
-  user_id: {
-    type: mongoose.Schema.Types.ObjectId, 
-    ref: 'User',
-    required: true
-  },
-  product_id: {
-    type: mongoose.Schema.Types.ObjectId, 
-    ref: 'Product',
-    required: true
-  }
-}, {
-  timestamps: true 
-});
+export const createWishlistTable = async () => {
+    try {
 
-export const Wishlist = mongoose.model('Wishlist', wishlistSchema);
+        await db.schema.createTableIfNotExists('wishlist', (table) => {
+            table.increments('id').primary(); 
+            table.integer('user_id').notNullable().references('id').inTable('users').onDelete('CASCADE'); 
+            table.integer('product_id').notNullable().references('id').inTable('products').onDelete('CASCADE'); 
+            table.timestamp('create_at').defaultTo(db.fn.now()); 
+            table.timestamp('update_at').defaultTo(db.fn.now()); 
+        });
 
+        logger.info('Reviews table created successfully');
+    } catch (error) {
+        logger.error(error);
+    } finally {
+        await db.destroy(); 
+    }
+};

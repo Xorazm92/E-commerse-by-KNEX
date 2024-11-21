@@ -1,14 +1,16 @@
-import { 
-    createProductService, 
-    deleteProductService, 
-    getProductService, 
-    updateProductService 
+import {
+    getProductService,
+    createProductService,
+    updateProductService,
+    deleteProductService,
 } from "../services/index.js";
 import { logger } from "../utils/index.js";
 
 export const getAllProductsController = async (req, res, next) => {
     try {
-        const allProducts = await getProductService("all");
+        const { page, limit } = req.query;
+        const pagination = { page: parseInt(page, 10) || 1, limit: parseInt(limit, 10) || 10 };
+        const allProducts = await getProductService("all", "", pagination);
         return res.status(200).send({
             message: "success",
             data: allProducts,
@@ -21,15 +23,17 @@ export const getAllProductsController = async (req, res, next) => {
 
 export const getFilteredProductsController = async (req, res, next) => {
     try {
-        const { category_id, title, price, tag } = req.query;
+        const { category_id, name, price, tag, page, limit } = req.query;
 
         let filters = {};
         if (category_id) filters.category_id = category_id;
-        if (title) filters.title = { $regex: title, $options: "i" }; 
+        if (name) filters.name = { $regex: name, $options: "i" };
         if (price) filters.price = price;
         if (tag) filters.tags = tag;
 
-        const filteredProducts = await getProductService("filter", filters);
+        const pagination = { page: parseInt(page, 10) || 1, limit: parseInt(limit, 10) || 10 };
+
+        const filteredProducts = await getProductService("filter", filters, pagination);
         return res.status(200).send({
             message: "success",
             data: filteredProducts,
