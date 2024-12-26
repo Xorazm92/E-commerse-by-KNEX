@@ -1,0 +1,46 @@
+[2024-12-03 12:58:40] INFO: server is runnig on port: 3005
+[2024-12-03 13:01:26] INFO: server is runnig on port: 3000
+[2024-12-03 13:02:59] ERROR: Unexpected token } in JSON at position 78
+[2024-12-03 13:04:53] INFO: server is runnig on port: 3000
+[2024-12-03 13:04:55] INFO: server is runnig on port: 3000
+[2024-12-03 13:04:56] INFO: server is runnig on port: 3000
+[2024-12-03 13:05:13] INFO: server is runnig on port: 3000
+[2024-12-03 13:05:19] INFO: server is runnig on port: 3000
+[2024-12-03 13:08:01] INFO: server is runnig on port: 3000
+[2024-12-03 13:08:15] INFO: server is runnig on port: 3000
+[2024-12-03 13:08:18] INFO: server is runnig on port: 3000
+[2024-12-03 13:08:20] INFO: server is runnig on port: 3000
+[2024-12-03 13:08:59] INFO: server is runnig on port: 3000
+[2024-12-03 13:09:08] INFO: server is runnig on port: 3000
+[2024-12-03 13:09:19] INFO: server is runnig on port: 3000
+[2024-12-03 13:09:20] INFO: server is runnig on port: 3000
+[2024-12-03 13:09:25] INFO: server is runnig on port: 3000
+[2024-12-03 13:09:27] INFO: server is runnig on port: 3000
+[2024-12-03 13:09:34] INFO: server is runnig on port: 3000
+[2024-12-03 13:09:35] INFO: server is runnig on port: 3000
+[2024-12-03 13:09:40] INFO: server is runnig on port: 3000
+[2024-12-03 13:09:42] INFO: server is runnig on port: 3000
+[2024-12-03 13:17:36] ERROR: AuthGuard error:
+[2024-12-03 13:17:36] ERROR: jwt expired
+[2024-12-03 13:22:07] ERROR: insert into "products" ("category_id", "discount_price", "full_description", "name", "price", "quantity", "seller_id", "short_description", "status") values ($1, $2, $3, $4, $5, $6, $7, $8, $9) returning * - insert or update on table "products" violates foreign key constraint "products_seller_id_foreign"
+[2024-12-03 13:28:05] ERROR: insert into "products" ("category_id", "discount_price", "full_description", "name", "price", "quantity", "seller_id", "short_description") values ($1, $2, $3, $4, $5, $6, $7, $8) returning * - insert or update on table "products" violates foreign key constraint "products_seller_id_foreign"
+[2024-12-03 13:30:43] ERROR: insert into "products" ("category_id", "discount_price", "full_description", "image_urls", "name", "price", "quantity", "seller_id", "short_description") values ($1, $2, $3, $4, $5, $6, $7, $8, $9) returning * - insert or update on table "products" violates foreign key constraint "products_seller_id_foreign"
+[2024-12-03 13:32:26] ERROR: insert into "products" ("category_id", "discount_price", "full_description", "image_urls", "name", "price", "quantity", "seller_id", "short_description") values ($1, $2, $3, $4, $5, $6, $7, $8, $9) returning * - insert or update on table "products" violates foreign key constraint "products_seller_id_foreign"
+[2024-12-03 13:36:11] ERROR: Unexpected token , in JSON at position 477
+[2024-12-03 17:15:10] ERROR: AuthGuard error:
+[2024-12-03 17:15:10] ERROR: jwt expired
+[2024-12-03 17:23:06] INFO: server is runnig on port: 3000
+[2024-12-03 17:30:51] ERROR: Incorrect username or passowrd
+[2024-12-03 17:30:51] ERROR: Incorrect username or passowrd
+[2024-12-03 17:33:18] INFO: server is runnig on port: 3000
+[2024-12-03 17:33:19] INFO: server is runnig on port: 3000
+[2024-12-03 17:33:24] INFO: server is runnig on port: 3000
+[2024-12-03 17:33:26] INFO: server is runnig on port: 3000
+[2024-12-03 17:33:34] INFO: server is runnig on port: 3000
+[2024-12-03 17:33:40] INFO: server is runnig on port: 3000
+[2024-12-03 17:33:54] INFO: server is runnig on port: 3000
+{"level":"info","message":"server is runnig on port: undefined","timestamp":"2024-12-26T19:14:25.218Z"}
+{"level":"info","message":"server is runnig on port: 3000","timestamp":"2024-12-26T20:10:12.345Z"}
+{"level":"info","message":"server is runnig on port: 3333","timestamp":"2024-12-26T20:13:34.808Z"}
+{"level":"info","message":"server is runnig on port: 3000","timestamp":"2024-12-26T20:15:01.897Z"}
+{"level":"info","message":"Server is running on port: 3555","timestamp":"2024-12-26T20:28:01.546Z"}
