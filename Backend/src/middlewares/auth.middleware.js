@@ -1,8 +1,8 @@
-const jwt = require('jsonwebtoken');
-const { UnauthorizedError, ForbiddenError } = require('../utils/errors');
-const User = require('../models/User');
+import jwt from 'jsonwebtoken';
+import { UnauthorizedError, ForbiddenError } from '../utils/errors.js';
+import User from '../models/User.js';
 
-const protect = async (req, res, next) => {
+export const protect = async (req, res, next) => {
   try {
     // 1) Get token from header
     let token;
@@ -19,28 +19,24 @@ const protect = async (req, res, next) => {
 
     // 3) Check if user still exists
     const user = await User.query().findById(decoded.id);
+
     if (!user) {
-      return next(new UnauthorizedError('User no longer exists'));
+      return next(new UnauthorizedError('The user no longer exists'));
     }
 
-    // 4) Add user to request object
+    // Grant access to protected route
     req.user = user;
     next();
-  } catch (error) {
-    next(error);
+  } catch (err) {
+    next(new UnauthorizedError('Invalid token'));
   }
 };
 
-const restrictTo = (...roles) => {
+export const restrictTo = (...roles) => {
   return (req, res, next) => {
     if (!roles.includes(req.user.role)) {
       return next(new ForbiddenError('You do not have permission to perform this action'));
     }
     next();
   };
-};
-
-module.exports = {
-  protect,
-  restrictTo
 };

@@ -117,4 +117,11 @@ class CategoryService {
   }
 }
 
-module.exports = new CategoryService()
+const categoryService = new CategoryService();
+
+export const createCategoryService = categoryService.createCategory.bind(categoryService);
+export const getAllCategoriesService = categoryService.getAllCategories.bind(categoryService);
+export const getCategoryByIdService = categoryService.getCategoryById.bind(categoryService);
+export const updateCategoryService = categoryService.updateCategory.bind(categoryService);
+export const deleteCategoryService = categoryService.deleteCategory.bind(categoryService);
+export const getCategoryStatsService = categoryService.getCategoryStats.bind(categoryService);

@@ -1,6 +1,6 @@
 module.exports = {
   apps: [{
-    name: 'nbt-shop',
+    name: 'Dunia-shop',
     script: 'server.js',
     instances: 'max',
     exec_mode: 'cluster',

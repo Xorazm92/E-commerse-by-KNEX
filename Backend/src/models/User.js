@@ -1,6 +1,6 @@
-const { Model } = require('objection');
-const bcrypt = require('bcryptjs');
-const knex = require('../database/connection');
+import { Model } from 'objection';
+import bcrypt from 'bcryptjs';
+import knex from '../database/connection.js';
 
 Model.knex(knex);
 
@@ -20,8 +20,6 @@ class User extends Model {
         role: { type: 'string', enum: ['user', 'admin'] },
         first_name: { type: 'string' },
         last_name: { type: 'string' },
-        phone: { type: 'string' },
-        address: { type: 'string' },
         created_at: { type: 'string' },
         updated_at: { type: 'string' }
       }
@@ -29,24 +27,29 @@ class User extends Model {
   }
 
   static get relationMappings() {
-    const Order = require('./Order');
-    const Cart = require('./Cart');
-
     return {
+      profile: {
+        relation: Model.HasOneRelation,
+        modelClass: 'Profile',
+        join: {
+          from: 'users.id',
+          to: 'profiles.user_id'
+        }
+      },
       orders: {
         relation: Model.HasManyRelation,
-        modelClass: Order,
+        modelClass: 'Order',
         join: {
           from: 'users.id',
           to: 'orders.user_id'
         }
       },
-      cart: {
-        relation: Model.HasOneRelation,
-        modelClass: Cart,
+      reviews: {
+        relation: Model.HasManyRelation,
+        modelClass: 'Review',
         join: {
           from: 'users.id',
-          to: 'carts.user_id'
+          to: 'reviews.user_id'
         }
       }
     };
@@ -55,20 +58,20 @@ class User extends Model {
   async $beforeInsert(context) {
     await super.$beforeInsert(context);
     if (this.password) {
-      this.password = await bcrypt.hash(this.password, 10);
+      this.password = await bcrypt.hash(this.password, 12);
     }
   }
 
   async $beforeUpdate(opt, context) {
     await super.$beforeUpdate(opt, context);
-    if (this.password && opt.patch) {
-      this.password = await bcrypt.hash(this.password, 10);
+    if (this.password) {
+      this.password = await bcrypt.hash(this.password, 12);
     }
   }
 
-  async verifyPassword(password) {
-    return bcrypt.compare(password, this.password);
+  async verifyPassword(candidatePassword) {
+    return await bcrypt.compare(candidatePassword, this.password);
   }
 }
 
-module.exports = User;
+export default User;

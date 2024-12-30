@@ -7,15 +7,15 @@ import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 
 // Import routes
-import authRoutes from './routers/auth.js';
-import productRoutes from './routers/products.js';
-import cartRoutes from './routers/cart.js';
-import orderRoutes from './routers/orders.js';
-import paymentRoutes from './routers/payment.js';
+import { authRouter } from './routers/auth.routes.js';
+import { productRouter } from './routers/products.routes.js';
+import { cartsRouter } from './routers/carts.routes.js';
+import { orderRouter } from './routers/orders.routes.js';
+import { paymentsRouter } from './routers/payments.routes.js';
 
 // Import middlewares
-import errorHandler from './middlewares/errorHandler.js';
-import authMiddleware from './middlewares/auth.js';
+import { errorHandler } from './middlewares/error.middleware.js';
+import { protect as authMiddleware } from './middlewares/auth.middleware.js';
 
 const app = express();
 
@@ -47,11 +47,11 @@ app.use('/uploads', express.static(join(__dirname, '../uploads')));
 
 // API routes
 const API_PREFIX = process.env.API_PREFIX || '/api/v1';
-app.use(`${API_PREFIX}/auth`, authRoutes);
-app.use(`${API_PREFIX}/products`, productRoutes);
-app.use(`${API_PREFIX}/cart`, authMiddleware, cartRoutes);
-app.use(`${API_PREFIX}/orders`, authMiddleware, orderRoutes);
-app.use(`${API_PREFIX}/payment`, authMiddleware, paymentRoutes);
+app.use(`${API_PREFIX}/auth`, authRouter);
+app.use(`${API_PREFIX}/products`, productRouter);
+app.use(`${API_PREFIX}/cart`, authMiddleware, cartsRouter);
+app.use(`${API_PREFIX}/orders`, authMiddleware, orderRouter);
+app.use(`${API_PREFIX}/payment`, authMiddleware, paymentsRouter);
 
 // Error handling
 app.use(errorHandler);

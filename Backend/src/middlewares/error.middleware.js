@@ -1,7 +1,7 @@
-const logger = require('../utils/logger');
-const { AppError } = require('../utils/errors');
+import { logger } from '../utils/logger.js';
+import { AppError } from '../utils/errors.js';
 
-const errorHandler = (err, req, res, next) => {
+export const errorHandler = (err, req, res, next) => {
   // Log error
   logger.error({
     message: err.message,
@@ -19,18 +19,27 @@ const errorHandler = (err, req, res, next) => {
     });
   }
 
-  // Handle Knex.js specific errors
-  if (err.code === '23505') { // unique violation
-    return res.status(409).json({
+  // Handle Objection.js errors
+  if (err.name === 'ValidationError') {
+    return res.status(400).json({
       status: 'fail',
-      message: 'Duplicate entry',
+      message: 'Invalid input data',
+      errors: err.data,
     });
   }
 
-  if (err.code === '23503') { // foreign key violation
-    return res.status(400).json({
+  if (err.name === 'NotFoundError') {
+    return res.status(404).json({
       status: 'fail',
-      message: 'Invalid reference',
+      message: 'Resource not found',
+    });
+  }
+
+  if (err.name === 'UniqueViolationError') {
+    return res.status(409).json({
+      status: 'fail',
+      message: 'Duplicate field value',
+      field: err.columns[0],
     });
   }
 
@@ -49,40 +58,20 @@ const errorHandler = (err, req, res, next) => {
     });
   }
 
-  // Handle validation errors
-  if (err.name === 'ValidationError') {
-    return res.status(400).json({
-      status: 'fail',
-      message: err.message,
-    });
-  }
-
   // Handle multer errors
-  if (err.code === 'LIMIT_FILE_SIZE') {
-    return res.status(400).json({
-      status: 'fail',
-      message: 'File too large',
-    });
-  }
-
-  // Handle stripe errors
-  if (err.type === 'StripeCardError') {
+  if (err.name === 'MulterError') {
     return res.status(400).json({
       status: 'fail',
       message: err.message,
     });
   }
 
-  // If error is not operational, send generic error message
-  const message = process.env.NODE_ENV === 'production'
-    ? 'Something went wrong'
-    : err.message;
+  // Handle other errors
+  console.error('Error 💥:', err);
 
   return res.status(500).json({
     status: 'error',
-    message,
-    ...(process.env.NODE_ENV === 'development' && { stack: err.stack }),
+    message: 'Something went wrong',
+    ...(process.env.NODE_ENV === 'development' && { error: err, stack: err.stack }),
   });
 };
-
-module.exports = { errorHandler };

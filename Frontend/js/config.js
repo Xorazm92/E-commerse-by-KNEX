@@ -5,7 +5,7 @@ const API_CONFIG = {
         STRIPE_PUBLIC_KEY: 'your-stripe-public-key'
     },
     production: {
-        BASE_URL: 'https://api.nbt.zufariy.uz/api/v1',
+        BASE_URL: 'https://api.Dunia.zufariy.uz/api/v1',
         STRIPE_PUBLIC_KEY: 'your-stripe-public-key'
     }
 };

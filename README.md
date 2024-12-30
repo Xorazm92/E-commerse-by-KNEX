@@ -1,7 +1,7 @@
-# NBT Shop - E-commerce Platform
+# Dunia Shop - E-commerce Platform
 
 ## Loyiha haqida
-NBT Shop - zamonaviy e-commerce platformasi bo'lib, mahsulotlarni sotib olish va sotish imkoniyatini beradi.
+Dunia Shop - zamonaviy e-commerce platformasi bo'lib, mahsulotlarni sotib olish va sotish imkoniyatini beradi.
 
 ## Asosiy xususiyatlari
 - Foydalanuvchilar ro'yxatdan o'tishi va tizimga kirishi
@@ -39,9 +39,9 @@ sudo systemctl start postgresql
 sudo systemctl enable postgresql
 
 # Database yaratish
-sudo -u postgres psql -c "CREATE DATABASE nbtshop;"
+sudo -u postgres psql -c "CREATE DATABASE Duniashop;"
 sudo -u postgres psql -c "CREATE USER postgres WITH PASSWORD 'postgres';"
-sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE nbtshop TO postgres;"
+sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE Duniashop TO postgres;"
 ```
 
 ### 3. Loyihani yuklab olish
@@ -83,7 +83,7 @@ firefox index.html
 
 ### 1. Admin panel
 - URL: http://localhost:3000/admin
-- Login: admin@nbtshop.uz
+- Login: admin@Duniashop.uz
 - Parol: admin123
 
 ### 2. User panel
@@ -147,8 +147,8 @@ firefox index.html
 
 ## Yordam va qo'llab-quvvatlash
 Muammo yoki savollar bo'lsa, quyidagi manzillarga murojaat qiling:
-- Email: support@nbtshop.uz
-- Telegram: @nbtshop_support
+- Email: support@Duniashop.uz
+- Telegram: @Duniashop_support
 - Tel: +998 90 123 45 67
 
 ## Yangilanishlar

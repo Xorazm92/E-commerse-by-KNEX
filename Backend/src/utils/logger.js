@@ -1,5 +1,9 @@
-const winston = require('winston');
-const path = require('path');
+import winston from 'winston';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Define log format
 const logFormat = winston.format.combine(
@@ -25,7 +29,7 @@ const level = () => {
 };
 
 // Create the logger
-const logger = winston.createLogger({
+export const logger = winston.createLogger({
   level: level(),
   levels,
   format: logFormat,
@@ -61,8 +65,6 @@ const logger = winston.createLogger({
 });
 
 // Create a stream object for Morgan
-logger.stream = {
+export const stream = {
   write: (message) => logger.http(message.trim()),
 };
-
-module.exports = logger;

@@ -9,7 +9,7 @@ export default {
     connection: {
       host: process.env.PG_HOST || 'localhost',
       port: process.env.PG_PORT || 5432,
-      database: process.env.PG_DATABASE || 'nbtshop',
+      database: process.env.PG_DATABASE || 'Duniashop',
       user: process.env.PG_USER || 'postgres',
       password: process.env.PG_PASSWORD || 'postgres'
     },

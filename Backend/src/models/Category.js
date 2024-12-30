@@ -1,5 +1,5 @@
-const { Model } = require('objection');
-const knex = require('../database/connection');
+import { Model } from 'objection';
+import knex from '../database/connection.js';
 
 Model.knex(knex);
 
@@ -38,4 +38,4 @@ class Category extends Model {
   }
 }
 
-module.exports = Category;
+export default Category;

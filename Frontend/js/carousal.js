@@ -1,15 +1,15 @@
 const reviews=[
     {
         name:"Xorazm92",
-        reviews:"Salom, men Xorazm92man! Men hozirgina yangi ryukzak sumkamni oldim va u aynan men qidirayotgan narsa edi!!!! Men uni juda yaxshi ko'raman!!!! Men sizning mahsulotlaringizni yaxshi ko'raman!!!!! Katta rahmat va NBT ga rahmat."
+        reviews:"Salom, men Xorazm92man! Men hozirgina yangi ryukzak sumkamni oldim va u aynan men qidirayotgan narsa edi!!!! Men uni juda yaxshi ko'raman!!!! Men sizning mahsulotlaringizni yaxshi ko'raman!!!!! Katta rahmat va Dunia ga rahmat."
     },
     {
         name:"Maryam",
-        reviews:"Men NBT do'konidan juda mamnunman. Mahsulotlar sifati a'lo darajada, xizmat ko'rsatish ham juda yaxshi. Albatta yana xarid qilaman!"
+        reviews:"Men Dunia do'konidan juda mamnunman. Mahsulotlar sifati a'lo darajada, xizmat ko'rsatish ham juda yaxshi. Albatta yana xarid qilaman!"
     },
     {
         name:"Aziz",
-        reviews:"NBT mahsulotlari boshqa brendlardan ancha sifatli. Narx-sifat nisbati juda yaxshi. Do'stlarimga ham tavsiya qilaman."
+        reviews:"Dunia mahsulotlari boshqa brendlardan ancha sifatli. Narx-sifat nisbati juda yaxshi. Do'stlarimga ham tavsiya qilaman."
     }
 ];
 const Name=document.querySelector(".test_box h4");

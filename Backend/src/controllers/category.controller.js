@@ -1,89 +1,71 @@
 import {
     createCategoryService,
     deleteCategoryService,
-    getCategorySevice,
+    getAllCategoriesService,
+    getCategoryByIdService,
     updateCategoryService,
 } from '../services/index.js'
 
-export const getallCategoryController = async (req, res, next) => {
+export const getAllCategoriesController = async (req, res, next) => {
     try {
-        // const page = parseInt(req.query.page) || 1
-        // const limit = parseInt(req.query.limit) || 10
-        // const skip = (page - 1) * limit
-
-        // const categories = await db('categories')
-        //     .select('*')
-        //     .limit(limit)
-        //     .offset(skip)
-
-        const allCategory = await getCategorySevice('all')
-        return res.status(200).send({
-            message: 'success',
-            date: allCategory,
-        })
+        const categories = await getAllCategoriesService(req.query);
+        return res.status(200).json({
+            success: true,
+            message: 'Categories retrieved successfully',
+            data: categories
+        });
     } catch (error) {
-        next(error)
+        next(error);
     }
-}
+};
 
-export const getoneCategoryController = async (req, res, next) => {
+export const getCategoryByIdController = async (req, res, next) => {
     try {
-        const id = req.params.id
-        const category = await getCategorySevice('id', id)
-
-        if (category.length === 0) {
-            throw new AppError('No categories found', 404)
-        }
-
-        return res.status(200).send({
-            message: 'success',
-            date: category,
-        })
+        const category = await getCategoryByIdService(req.params.id);
+        return res.status(200).json({
+            success: true,
+            message: 'Category retrieved successfully',
+            data: category
+        });
     } catch (error) {
-        next(error)
+        next(error);
     }
-}
+};
 
 export const createCategoryController = async (req, res, next) => {
     try {
-        const body = req.body
-        const newCategory = await createCategoryService(body)
-
-        return res.status(201).send({
-            status: 'Created',
-            category: newCategory.id,
-        })
+        const category = await createCategoryService(req.body);
+        return res.status(201).json({
+            success: true,
+            message: 'Category created successfully',
+            data: category
+        });
     } catch (error) {
-        next(error)
+        next(error);
     }
-}
+};
 
 export const updateCategoryController = async (req, res, next) => {
     try {
-        const id = req.params.id
-        const updates = req.body
-
-        const updatedCategory = await updateCategoryService(id, updates)
-
-        return res.status(200).send({
-            status: 'Success',
-            category: updatedCategory,
-        })
+        const category = await updateCategoryService(req.params.id, req.body);
+        return res.status(200).json({
+            success: true,
+            message: 'Category updated successfully',
+            data: category
+        });
     } catch (error) {
-        next(error)
+        next(error);
     }
-}
+};
 
 export const deleteCategoryController = async (req, res, next) => {
     try {
-        const id = req.params.id
-        const deletedCategory = await deleteCategoryService(id)
-
-        return res.status(200).send({
-            status: 'Deleted',
-            message: 'Category deleted Successfully',
-        })
+        await deleteCategoryService(req.params.id);
+        return res.status(200).json({
+            success: true,
+            message: 'Category deleted successfully'
+        });
     } catch (error) {
-        next(error)
+        next(error);
     }
-}
+};
