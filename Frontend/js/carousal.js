@@ -1,14 +1,15 @@
 const reviews=[
     {
-        name:"William Lucas",
-        reviews:"Hi it's William from Lahore! I just received my new backpack purse and it is exactly what I've been looking for!!!! I totally love it!!!! I just love your stuff!!!!! Thanks so much and thanks to LeatherHoard."
+        name:"Xorazm92",
+        reviews:"Salom, men Xorazm92man! Men hozirgina yangi ryukzak sumkamni oldim va u aynan men qidirayotgan narsa edi!!!! Men uni juda yaxshi ko'raman!!!! Men sizning mahsulotlaringizni yaxshi ko'raman!!!!! Katta rahmat va NBT ga rahmat."
     },
     {
-        name:"Marry Noah",
-        reviews:"Recently purchased a jacket from them and I am fairly satisfied with quality as well as the service. The tooling, stitching, quality of the leather, all of it is really really great. You guys totally rock!"
-    }, {
-        name:"Sania Khan",
-        reviews:"I received my bagpack today. Thank you. I did not expect such fast service and was very pleased to be able to use the bag this weekend. The shoulder strap is perfect. Thanks you once again. I am a handbag nut and I must say that I have never been as pleased as I have been with the bags I have purchased from you. They are just perfect."
+        name:"Maryam",
+        reviews:"Men NBT do'konidan juda mamnunman. Mahsulotlar sifati a'lo darajada, xizmat ko'rsatish ham juda yaxshi. Albatta yana xarid qilaman!"
+    },
+    {
+        name:"Aziz",
+        reviews:"NBT mahsulotlari boshqa brendlardan ancha sifatli. Narx-sifat nisbati juda yaxshi. Do'stlarimga ham tavsiya qilaman."
     }
 ];
 const Name=document.querySelector(".test_box h4");

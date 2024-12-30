@@ -1,130 +1,128 @@
-import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import { config } from '../configs/index.js';
-import { logger } from '../utils/index.js';
-import db from '../database/index.js';
+import bcrypt from 'bcryptjs';
+import User from '../models/User';
+import { UnauthorizedError, NotFoundError } from '../utils/errors';
 
-export const authService = {
-    // Register new user
-    register: async (userData) => {
-        try {
-            // Check if user exists
-            const existingUser = await db('users')
-                .where('email', userData.email)
-                .first();
-            
-            if (existingUser) {
-                throw new Error('User already exists');
-            }
-
-            // Hash password
-            const salt = await bcrypt.genSalt(10);
-            const hashedPassword = await bcrypt.hash(userData.password, salt);
-
-            // Create user
-            const [user] = await db('users')
-                .insert({
-                    ...userData,
-                    password: hashedPassword,
-                    role: 'user'
-                })
-                .returning('*');
-
-            // Create profile
-            await db('profiles')
-                .insert({
-                    user_id: user.id,
-                    full_name: userData.full_name || '',
-                    phone: userData.phone || ''
-                });
-
-            return user;
-        } catch (error) {
-            logger.error('Register service error:', error);
-            throw error;
-        }
-    },
-
-    // Login user
-    login: async (credentials) => {
-        try {
-            // Find user
-            const user = await db('users')
-                .where('email', credentials.email)
-                .first();
-
-            if (!user) {
-                throw new Error('Invalid credentials');
-            }
-
-            // Check password
-            const isValidPassword = await bcrypt.compare(
-                credentials.password,
-                user.password
-            );
-
-            if (!isValidPassword) {
-                throw new Error('Invalid credentials');
-            }
-
-            // Generate JWT token
-            const token = jwt.sign(
-                { id: user.id, email: user.email, role: user.role },
-                config.jwt.secret,
-                { expiresIn: '24h' }
-            );
-
-            return { token, user: { id: user.id, email: user.email, role: user.role } };
-        } catch (error) {
-            logger.error('Login service error:', error);
-            throw error;
-        }
-    },
-
-    // Reset password
-    resetPassword: async (email, newPassword) => {
-        try {
-            // Find user
-            const user = await db('users')
-                .where('email', email)
-                .first();
-
-            if (!user) {
-                throw new Error('User not found');
-            }
-
-            // Hash new password
-            const salt = await bcrypt.genSalt(10);
-            const hashedPassword = await bcrypt.hash(newPassword, salt);
-
-            // Update password
-            await db('users')
-                .where('id', user.id)
-                .update({ password: hashedPassword });
-
-            return true;
-        } catch (error) {
-            logger.error('Reset password service error:', error);
-            throw error;
-        }
-    },
-
-    // Verify JWT token
-    verifyToken: async (token) => {
-        try {
-            const decoded = jwt.verify(token, config.jwt.secret);
-            const user = await db('users')
-                .where('id', decoded.id)
-                .first();
-
-            if (!user) {
-                throw new Error('User not found');
-            }
-
-            return decoded;
-        } catch (error) {
-            logger.error('Token verification error:', error);
-            throw error;
-        }
+class AuthService {
+  async register(userData) {
+    const existingUser = await User.query().findOne({ email: userData.email });
+    if (existingUser) {
+      throw new Error('Email already registered');
     }
-};
+
+    const user = await User.query().insert({
+      ...userData,
+      role: 'user'  // Default role for new users
+    });
+
+    const token = this.generateToken(user);
+    return { user, token };
+  }
+
+  async login(email, password) {
+    const user = await User.query().findOne({ email });
+    if (!user) {
+      throw new UnauthorizedError('Invalid credentials');
+    }
+
+    const isValidPassword = await user.verifyPassword(password);
+    if (!isValidPassword) {
+      throw new UnauthorizedError('Invalid credentials');
+    }
+
+    const token = this.generateToken(user);
+    return { user, token };
+  }
+
+  generateToken(user) {
+    return jwt.sign(
+      { 
+        id: user.id,
+        email: user.email,
+        role: user.role 
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: process.env.JWT_EXPIRES_IN }
+    );
+  }
+
+  async getUserProfile(userId) {
+    const user = await User.query()
+      .findById(userId)
+      .withGraphFetched('[orders, cart.cartItems.product]');
+    
+    if (!user) {
+      throw new NotFoundError('User not found');
+    }
+    
+    return user;
+  }
+
+  async updateUserProfile(userId, updateData) {
+    // Remove sensitive fields that shouldn't be updated directly
+    delete updateData.password;
+    delete updateData.role;
+    
+    const user = await User.query()
+      .patchAndFetchById(userId, updateData);
+    
+    if (!user) {
+      throw new NotFoundError('User not found');
+    }
+    
+    return user;
+  }
+
+  async changePassword(userId, oldPassword, newPassword) {
+    const user = await User.query().findById(userId);
+    if (!user) {
+      throw new NotFoundError('User not found');
+    }
+
+    const isValidPassword = await user.verifyPassword(oldPassword);
+    if (!isValidPassword) {
+      throw new UnauthorizedError('Invalid current password');
+    }
+
+    await User.query()
+      .patch({ password: newPassword })
+      .where('id', userId);
+
+    return { success: true };
+  }
+
+  async getAllUsers(query = {}) {
+    const { page = 1, limit = 10, role, search } = query;
+    
+    let usersQuery = User.query()
+      .select('id', 'email', 'role', 'first_name', 'last_name', 'created_at')
+      .page(page - 1, limit);
+
+    if (role) {
+      usersQuery = usersQuery.where('role', role);
+    }
+
+    if (search) {
+      usersQuery = usersQuery.where(builder => {
+        builder.where('email', 'ilike', `%${search}%`)
+          .orWhere('first_name', 'ilike', `%${search}%`)
+          .orWhere('last_name', 'ilike', `%${search}%`);
+      });
+    }
+
+    return await usersQuery;
+  }
+
+  async updateUserRole(userId, role) {
+    const user = await User.query()
+      .patchAndFetchById(userId, { role });
+    
+    if (!user) {
+      throw new NotFoundError('User not found');
+    }
+    
+    return user;
+  }
+}
+
+export default new AuthService();

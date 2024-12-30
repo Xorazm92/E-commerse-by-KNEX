@@ -1,76 +1,80 @@
-import express from 'express'
-import morgan from 'morgan'
-import cors from 'cors'
-import helmet from 'helmet'
-import rateLimit from 'express-rate-limit'
-import path from 'path'
-import { fileURLToPath } from 'url'
+import express from 'express';
+import cors from 'cors';
+import helmet from 'helmet';
+import rateLimit from 'express-rate-limit';
+import morgan from 'morgan';
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
 
-import { routers } from './routers/index.js'
-import { logger } from './utils/logger.js'
+// Import routes
+import authRoutes from './routers/auth.js';
+import productRoutes from './routers/products.js';
+import cartRoutes from './routers/cart.js';
+import orderRoutes from './routers/orders.js';
+import paymentRoutes from './routers/payment.js';
 
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
-const FRONTEND_PATH = path.join(__dirname, '../../Frontend')
+// Import middlewares
+import errorHandler from './middlewares/errorHandler.js';
+import authMiddleware from './middlewares/auth.js';
 
-const app = express()
+const app = express();
 
+// Security middleware
+app.use(helmet());
+app.use(cors({
+    origin: process.env.CORS_ORIGIN || 'http://localhost:3000',
+    credentials: true
+}));
+
+// Rate limiting
 const limiter = rateLimit({
-    windowMs: 10 * 60 * 1000,
-    max: 100,
-    message: 'Too many requests from this IP address',
-})
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100 // limit each IP to 100 requests per windowMs
+});
+app.use('/api/', limiter);
 
-// Middleware
-app.use(express.json())
-app.use(express.urlencoded({ extended: true }))
-app.use(limiter)
-app.use(morgan('dev'))
-app.use(helmet({
-    contentSecurityPolicy: false,
-}))
-app.use(cors())
+// Logging
+app.use(morgan('combined'));
+
+// Body parser
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // Static files
-app.use(express.static(FRONTEND_PATH))
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+app.use('/uploads', express.static(join(__dirname, '../uploads')));
 
 // API routes
-app.use('/api/v1', routers)
-
-// Frontend routes
-app.get('/', (req, res) => {
-    res.sendFile(path.join(FRONTEND_PATH, 'index.html'))
-})
-
-app.get('/login', (req, res) => {
-    res.sendFile(path.join(FRONTEND_PATH, 'login.html'))
-})
+const API_PREFIX = process.env.API_PREFIX || '/api/v1';
+app.use(`${API_PREFIX}/auth`, authRoutes);
+app.use(`${API_PREFIX}/products`, productRoutes);
+app.use(`${API_PREFIX}/cart`, authMiddleware, cartRoutes);
+app.use(`${API_PREFIX}/orders`, authMiddleware, orderRoutes);
+app.use(`${API_PREFIX}/payment`, authMiddleware, paymentRoutes);
 
 // Error handling
-app.use((req, res, next) => {
-    res.status(404).json({
-        success: false,
-        message: 'Not Found'
-    })
-})
+app.use(errorHandler);
 
-app.use((err, req, res, next) => {
-    logger.error(err.message)
-    res.status(err.status || 500).json({
-        success: false,
-        message: err.message || 'Internal Server Error'
-    })
-})
+// Serve static files in production
+if (process.env.NODE_ENV === 'production') {
+  const FRONTEND_PATH = join(__dirname, '../../Frontend/build');
+  app.use(express.static(FRONTEND_PATH));
+
+  app.get('*', (req, res) => {
+    res.sendFile(join(FRONTEND_PATH, 'index.html'));
+  });
+}
 
 //unhandlede rejection and uncaught exception lar
 process.on('uncaughtException', (err) => {
-    logger.error(err.message)
-    process.exit(1)
+  console.error(err.message)
+  process.exit(1)
 })
 
 process.on('unhandledRejection', (reason, promise) => {
-    logger.error(`Unhandled rejection: ${reason}`)
-    process.exit(1)
+  console.error(`Unhandled rejection: ${reason}`)
+  process.exit(1)
 })
 
-export default app
+export default app;

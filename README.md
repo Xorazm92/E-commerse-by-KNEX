@@ -1,113 +1,157 @@
-# E-Commerce Platform
+# NBT Shop - E-commerce Platform
 
-A full-stack e-commerce platform built with Node.js, Express, PostgreSQL, and vanilla JavaScript.
+## Loyiha haqida
+NBT Shop - zamonaviy e-commerce platformasi bo'lib, mahsulotlarni sotib olish va sotish imkoniyatini beradi.
 
-## Features
+## Asosiy xususiyatlari
+- Foydalanuvchilar ro'yxatdan o'tishi va tizimga kirishi
+- Mahsulotlarni qo'shish, o'zgartirish va o'chirish
+- Mahsulotlarni qidirish va filtrlash
+- Savat tizimi
+- To'lov tizimi (Stripe orqali)
+- Email xabarnomalar
+- Responsive dizayn
 
-- User authentication (login/register)
-- Product catalog with categories
-- Shopping cart functionality
-- Secure payment processing with Stripe
-- Order management
-- User profile management
-- Product reviews and ratings
-- Admin dashboard
-- Responsive design
+## Texnologiyalar
+- Frontend: HTML, CSS, JavaScript
+- Backend: Node.js, Express.js
+- Database: PostgreSQL
+- Payment: Stripe
+- Email: Nodemailer
 
-## Prerequisites
+## O'rnatish
 
-- Node.js (v14 or higher)
-- PostgreSQL (v12 or higher)
-- npm or yarn
+### 1. Kerakli dasturlarni o'rnatish
+```bash
+# Node.js o'rnatish (v14 yoki yuqori versiya)
+curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
+sudo apt-get install -y nodejs
 
-## Installation
+# PostgreSQL o'rnatish
+sudo apt update
+sudo apt install postgresql postgresql-contrib
+```
 
-1. Clone the repository:
+### 2. PostgreSQL sozlash
+```bash
+# PostgreSQL serverni ishga tushirish
+sudo systemctl start postgresql
+sudo systemctl enable postgresql
+
+# Database yaratish
+sudo -u postgres psql -c "CREATE DATABASE nbtshop;"
+sudo -u postgres psql -c "CREATE USER postgres WITH PASSWORD 'postgres';"
+sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE nbtshop TO postgres;"
+```
+
+### 3. Loyihani yuklab olish
 ```bash
 git clone <repository-url>
-cd ecommerce
+cd ECOMMERS
 ```
 
-2. Install dependencies:
+### 4. Backend sozlash
 ```bash
 cd Backend
+
+# Dependencylarni o'rnatish
 npm install
-cd ../Frontend
-npm install
+
+# .env faylini sozlash
+cp .env.example .env
+# .env fayliga kerakli ma'lumotlarni kiriting
+
+# Databaseni migrate qilish
+npm run migrate
+
+# Serverni ishga tushirish
+npm run dev
 ```
 
-3. Configure environment variables:
-- Copy `.env.example` to `.env`
-- Update the values in `.env` with your configuration
-
-4. Set up the database:
+### 5. Frontend sozlash
 ```bash
-cd Backend
-npx knex migrate:latest
-npx knex seed:run
+cd Frontend
+
+# index.html faylini brauzerda ochish
+# Linux uchun:
+xdg-open index.html
+# yoki
+firefox index.html
 ```
 
-5. Start the server:
-```bash
-cd Backend
-npm start
-```
+## Ishlatish
 
-6. Open your browser and navigate to `http://localhost:3000`
+### 1. Admin panel
+- URL: http://localhost:3000/admin
+- Login: admin@nbtshop.uz
+- Parol: admin123
 
-## Environment Variables
+### 2. User panel
+- URL: http://localhost:3000
+- Ro'yxatdan o'tish uchun "Sign Up" tugmasini bosing
+- Tizimga kirish uchun "Login" tugmasini bosing
 
-Make sure to set the following environment variables in your `.env` file:
+### 3. Asosiy funksiyalar
+1. **Mahsulotlarni ko'rish**
+   - Bosh sahifada barcha mahsulotlar ro'yxati
+   - Kategoriyalar bo'yicha filtrlash
+   - Qidiruv funksiyasi
 
-```
-PORT=3000
-JWT_SECRET=your_jwt_secret_key_here
-DB_HOST=localhost
-DB_USER=postgres
-DB_PASSWORD=your_password_here
-DB_NAME=ecommerce
-DB_PORT=5432
-STRIPE_SECRET_KEY=your_stripe_secret_key
-STRIPE_PUBLISHABLE_KEY=your_stripe_publishable_key
-SMTP_HOST=smtp.gmail.com
-SMTP_PORT=587
-SMTP_USER=your_email@gmail.com
-SMTP_PASS=your_email_password
-```
+2. **Savat bilan ishlash**
+   - Mahsulotni savatga qo'shish
+   - Miqdorni o'zgartirish
+   - Savatdan o'chirish
 
-## API Documentation
+3. **Buyurtma berish**
+   - Yetkazib berish manzilini kiritish
+   - To'lov usulini tanlash
+   - Buyurtmani tasdiqlash
 
-### Authentication
-- POST /api/v1/auth/register - Register a new user
-- POST /api/v1/auth/login - Login user
-- POST /api/v1/auth/logout - Logout user
+4. **Admin panel**
+   - Mahsulotlarni boshqarish
+   - Buyurtmalarni ko'rish va statusini o'zgartirish
+   - Foydalanuvchilarni boshqarish
+   - Statistikani ko'rish
 
-### Products
-- GET /api/v1/products - Get all products
-- GET /api/v1/products/:id - Get product by ID
-- POST /api/v1/products - Create new product (admin only)
-- PUT /api/v1/products/:id - Update product (admin only)
-- DELETE /api/v1/products/:id - Delete product (admin only)
+## Xatolarni bartaraf etish
 
-### Cart
-- GET /api/v1/cart - Get user's cart
-- POST /api/v1/cart/add - Add item to cart
-- PUT /api/v1/cart/:id - Update cart item
-- DELETE /api/v1/cart/:id - Remove item from cart
+### Database xatolari
+1. "Connection refused" xatosi:
+   ```bash
+   sudo systemctl restart postgresql
+   ```
 
-### Orders
-- GET /api/v1/orders - Get user's orders
-- POST /api/v1/orders - Create new order
-- GET /api/v1/orders/:id - Get order by ID
+2. "Authentication failed" xatosi:
+   ```bash
+   # pg_hba.conf faylini tahrirlash
+   sudo nano /etc/postgresql/14/main/pg_hba.conf
+   # "peer" ni "md5" ga o'zgartiring
+   sudo systemctl restart postgresql
+   ```
 
-## Contributing
+### Backend xatolari
+1. "Port already in use" xatosi:
+   ```bash
+   # Portni band qilgan processni topish
+   sudo lsof -i :3000
+   # Processni to'xtatish
+   sudo kill -9 <PID>
+   ```
 
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+2. "Module not found" xatosi:
+   ```bash
+   # Node modullarini qayta o'rnatish
+   rm -rf node_modules
+   npm install
+   ```
 
-## License
+## Yordam va qo'llab-quvvatlash
+Muammo yoki savollar bo'lsa, quyidagi manzillarga murojaat qiling:
+- Email: support@nbtshop.uz
+- Telegram: @nbtshop_support
+- Tel: +998 90 123 45 67
 
-This project is licensed under the MIT License - see the LICENSE file for details
+## Yangilanishlar
+- v1.0.0 - Dastlabki versiya
+- v1.1.0 - Stripe to'lov tizimi qo'shildi
+- v1.2.0 - Email xabarnomalar qo'shildi
