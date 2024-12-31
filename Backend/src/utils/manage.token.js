@@ -23,6 +23,10 @@ export const forgetPasswordToken = (user) => {
 }
 
 export const verifyToken = (token, secret) => {
-    const verified = jwt.verify(token, secret)
-    return verified
+    try {
+        const verified = jwt.verify(token, secret);
+        return verified;
+    } catch (error) {
+        return null;
+    }
 }
